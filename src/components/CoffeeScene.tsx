@@ -136,7 +136,7 @@ export default function CoffeeScene() {
         />
         <Lightformer
           intensity={0.8}
-          color="#5a3venus"
+          color="#7a4a24"
           position={[5, 0, 1]}
           rotation-y={-Math.PI / 2}
           scale={[20, 2, 1]}
