@@ -9,56 +9,73 @@ function Cup() {
   useFrame((state, delta) => {
     if (!group.current) return;
     const dt = Math.min(delta, 0.05);
-    group.current.rotation.y += dt * 0.25;
+    const t = state.clock.elapsedTime;
     const p = state.pointer;
-    group.current.rotation.x += (p.y * 0.18 - group.current.rotation.x) * (1 - Math.exp(-3 * dt));
+    // gentle sway instead of a full spin (a spinning handle reads as a glitch)
+    const targetY = Math.sin(t * 0.35) * 0.28 + p.x * 0.35;
+    const targetX = -0.05 + p.y * 0.12;
+    const k = 1 - Math.exp(-2.5 * dt);
+    group.current.rotation.y += (targetY - group.current.rotation.y) * k;
+    group.current.rotation.x += (targetX - group.current.rotation.x) * k;
   });
 
   return (
     <group ref={group}>
       {/* saucer */}
-      <mesh position={[0, -0.62, 0]} castShadow receiveShadow>
-        <cylinderGeometry args={[1.75, 1.55, 0.12, 64]} />
+      <mesh position={[0, -0.98, 0]} castShadow receiveShadow>
+        <cylinderGeometry args={[1.9, 1.62, 0.12, 96]} />
         <meshStandardMaterial color="#f6efe4" roughness={0.35} metalness={0.05} />
       </mesh>
-      {/* cup body */}
-      <mesh position={[0, 0.05, 0]} castShadow receiveShadow>
-        <cylinderGeometry args={[1.05, 0.78, 1.15, 64, 1, true]} />
+      {/* cup body (closed lathe-free solid: outer wall) */}
+      <mesh position={[0, -0.1, 0]} castShadow receiveShadow>
+        <cylinderGeometry args={[1.05, 0.72, 1.3, 96, 1, true]} />
         <meshStandardMaterial
           color="#fbf6ee"
-          roughness={0.28}
+          roughness={0.3}
           metalness={0.04}
           side={THREE.DoubleSide}
         />
       </mesh>
-      {/* cup base */}
-      <mesh position={[0, -0.5, 0]} castShadow>
-        <cylinderGeometry args={[0.78, 0.62, 0.14, 64]} />
-        <meshStandardMaterial color="#f1e9dc" roughness={0.4} />
+      {/* cup bottom cap */}
+      <mesh position={[0, -0.75, 0]} castShadow receiveShadow>
+        <cylinderGeometry args={[0.72, 0.66, 0.1, 96]} />
+        <meshStandardMaterial color="#f1e9dc" roughness={0.42} />
       </mesh>
       {/* rim */}
-      <mesh position={[0, 0.62, 0]} rotation-x={Math.PI / 2}>
-        <torusGeometry args={[1.05, 0.05, 16, 64]} />
-        <meshStandardMaterial color="#ffffff" roughness={0.2} />
+      <mesh position={[0, 0.55, 0]} rotation-x={Math.PI / 2} castShadow>
+        <torusGeometry args={[1.045, 0.045, 20, 96]} />
+        <meshStandardMaterial color="#ffffff" roughness={0.22} />
       </mesh>
       {/* coffee surface */}
-      <mesh position={[0, 0.55, 0]} rotation-x={-Math.PI / 2}>
-        <circleGeometry args={[1.02, 64]} />
-        <meshStandardMaterial color="#2a140a" roughness={0.12} metalness={0.5} />
+      <mesh position={[0, 0.42, 0]} rotation-x={-Math.PI / 2}>
+        <circleGeometry args={[1.0, 96]} />
+        <meshStandardMaterial color="#2a140a" roughness={0.15} metalness={0.35} />
       </mesh>
-      {/* crema swirl */}
-      <mesh position={[0, 0.565, 0]} rotation-x={-Math.PI / 2}>
-        <ringGeometry args={[0.55, 0.95, 64]} />
-        <meshStandardMaterial color="#8a5a2b" roughness={0.35} transparent opacity={0.55} />
+      {/* crema swirl (polygon offset avoids z-fighting with the coffee) */}
+      <mesh position={[0, 0.42, 0]} rotation-x={-Math.PI / 2} renderOrder={1}>
+        <ringGeometry args={[0.42, 0.94, 96]} />
+        <meshStandardMaterial
+          color="#a06a33"
+          roughness={0.4}
+          transparent
+          opacity={0.6}
+          depthWrite={false}
+          polygonOffset
+          polygonOffsetFactor={-2}
+          polygonOffsetUnits={-2}
+        />
       </mesh>
       {/* handle */}
-      <mesh position={[1.15, 0.1, 0]} rotation={[Math.PI / 2, 0, 0]} castShadow>
-        <torusGeometry args={[0.42, 0.11, 20, 60, Math.PI * 1.25]} />
-        <meshStandardMaterial color="#fbf6ee" roughness={0.3} />
-      </mesh>
+      <group position={[1.0, -0.15, 0]} rotation={[0, 0, -Math.PI / 2]}>
+        <mesh rotation={[Math.PI / 2, 0, Math.PI * 0.38]} castShadow>
+          <torusGeometry args={[0.44, 0.1, 24, 80, Math.PI * 1.24]} />
+          <meshStandardMaterial color="#fbf6ee" roughness={0.3} />
+        </mesh>
+      </group>
     </group>
   );
 }
+
 
 function Beans() {
   const group = useRef<THREE.Group>(null);
