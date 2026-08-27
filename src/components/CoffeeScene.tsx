@@ -66,12 +66,11 @@ function Cup() {
         />
       </mesh>
       {/* handle */}
-      <group position={[1.0, -0.15, 0]} rotation={[0, 0, -Math.PI / 2]}>
-        <mesh rotation={[Math.PI / 2, 0, Math.PI * 0.38]} castShadow>
-          <torusGeometry args={[0.44, 0.1, 24, 80, Math.PI * 1.24]} />
-          <meshStandardMaterial color="#fbf6ee" roughness={0.3} />
-        </mesh>
-      </group>
+      <mesh position={[0.98, -0.1, 0]} rotation={[0, 0, -Math.PI * 0.62]} castShadow>
+        <torusGeometry args={[0.44, 0.1, 24, 96, Math.PI * 1.24]} />
+        <meshStandardMaterial color="#fbf6ee" roughness={0.3} />
+      </mesh>
+
     </group>
   );
 }
