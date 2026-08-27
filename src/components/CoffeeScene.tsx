@@ -82,9 +82,10 @@ function Beans() {
     () =>
       Array.from({ length: 22 }, (_, i) => {
         const a = (i / 22) * Math.PI * 2;
-        const r = 2.4 + (i % 4) * 0.42;
+        const r = 3.0 + (i % 4) * 0.4;
         return {
-          pos: [Math.cos(a) * r, -0.45 + Math.sin(i * 3.1) * 0.9, Math.sin(a) * r] as const,
+          pos: [Math.cos(a) * r, -1.15 + Math.sin(i * 3.1) * 0.35, Math.sin(a) * r] as const,
+
           rot: [i * 0.7, i * 1.3, i * 0.4] as const,
           s: 0.18 + (i % 3) * 0.035,
           speed: 0.1 + (i % 5) * 0.02,
